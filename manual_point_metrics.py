@@ -25,8 +25,8 @@ import math
 import numpy as np
 
 # ------------- I/O (set these) -------------
-INPUT_VIDEO = "raw_video_data/ExRunBending1 - MP4/bending4_test1.mp4"   # <- SET
-OUTPUT_DIR  = "./processed_video_data/manual"   # <- SET
+INPUT_VIDEO = "raw_video_data/ExRunFinal - Protract/lin_collapse1_test1.mp4"   # <- SET
+OUTPUT_DIR  = "./processed_video_data/ExRunFinal - Protract"   # <- SET
 CALIB_SECS  = 2.0                               # seconds from start to try chessboard calib
 
 # ------------- Calibration settings -------------
@@ -37,6 +37,9 @@ DETECTIONS_REQ   = 1
 FRAME_STRIDE     = 1
 MAX_CALIB_FRAMES = 300               # hard cap during calib scan
 SCALE_DEF        = 0.38              # fallback mm/px if calibration fails
+
+# Relative vs Absolute Extension 
+EXTENSION_MODE = "absolute"  # "relative" or "absolute"
 
 # ------------- Summary CSV name -------------
 SUMMARY_CSV = "summary_results.csv"
@@ -264,7 +267,10 @@ def main():
     # vertical separations (screen y increases downward → use base_y - tip_y)
     sep_min_px = (base_min_y - tip_min_y)
     sep_max_px = (base_max_y - tip_max_y)
-    lin_extension_px = (sep_max_px - sep_min_px)
+    if EXTENSION_MODE == "absolute":
+        lin_extension_px = sep_max_px
+    elif EXTENSION_MODE == "relative":  # relative
+        lin_extension_px = (sep_max_px - sep_min_px)
     lin_extension_mm = lin_extension_px * mm_per_px
 
     # bending at MAX: angle of base->tip vs vertical; horizontal displacement
